@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给猫猫的专属提问</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        /* 极简、温柔、干净的页面风格设定 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'ZCOOL KuaiLe', cursive, 'Microsoft YaHei', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            /* 温柔的燕麦奶茶色背景 */
+            background-color: #FFFBF5;
+            color: #5C4A4D; /* 暖灰棕色字体 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* 顶部标题区 */
+        .title-container {
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 400;
+            color: #6D595D;
+            letter-spacing: 2px;
+            line-height: 1.5;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .emoji-dec {
+            font-size: 32px;
+            margin-top: 10px;
+        }
+
+        /* 按钮容器，设置相对定位用于内部按钮移动 */
+        .buttons-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        /* 通用按钮样式 */
+        button {
+            border: none;
+            outline: none;
+            border-radius: 30px;
+            padding: 12px 28px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            white-space: nowrap;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* “可以”按钮（主导按钮） */
+        #yes-btn {
+            background-color: #FFA6C9; /* 温柔的浅玫瑰粉 */
+            color: #FFFFFF;
+            font-weight: bold;
+            z-index: 20;
+            position: relative;
+        }
+
+        #yes-btn:hover {
+            background-color: #FF94BC;
+            box-shadow: 0 6px 16px rgba(255, 166, 201, 0.4);
+        }
+
+        /* “再考虑”按钮（弱势按钮） */
+        #no-btn {
+            background-color: #EFEBE5; /* 灰调燕麦色 */
+            color: #8C7A7D;
+            position: absolute;
+            z-index: 10;
+            transform-origin: center center;
+        }
+
+        /* 最终成功弹窗遮罩 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 251, 245, 0.95); /* 半透明暖白遮罩 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease;
+            z-index: 100;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 弹窗内容区 */
+        .success-box {
+            background: #FFFFFF;
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 350px;
+            width: 100%;
+            transform: translateY(20px);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .overlay.active .success-box {
+            transform: translateY(0);
+        }
+
+        .success-text {
+            font-size: 20px;
+            color: #5C4A4D;
+            line-height: 1.8;
+            margin-top: 15px;
+        }
+
+        .success-emoji {
+            font-size: 48px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* 移动端适配适配 */
+        @media (max-width: 480px) {
+            h1 { font-size: 24px; }
+            .buttons-wrapper { gap: 10px; height: 200px; }
+            button { font-size: 16px; padding: 10px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-container">
+        <h1 id="main-title">猫猫，可以做我的恋人吗？</h1>
+        <div class="emoji-dec">🥺🦊🎀</div>
+    </div>
+
+    <div class="buttons-wrapper">
+        <button id="yes-btn" onclick="acceptLove()">可以</button>
+        <button id="no-btn" style="right: 10%;" onclick="rejectLove()">再考虑一下</button>
+    </div>
+
+    <div class="overlay" id="success-overlay">
+        <div class="success-box">
+            <div class="success-emoji">💗</div>
+            <div class="success-text" id="final-message">
+                我就知道你会同意的。<br>
+                以后你就是我的专属猫猫了。<br>
+                不许反悔，乖乖过来让我抱一下。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const mainTitle = document.getElementById('main-title');
+        const overlay = document.getElementById('success-overlay');
+        const buttonsWrapper = document.querySelector('.buttons-wrapper');
+
+        // 拒绝按钮的文案数组（撒娇风格，层层递进）
+        const noTexts = [
+            "老婆不要拒绝我🥺",
+            "真的不再想想吗？",
+            "狐狸会很乖的🐾",
+            "心都要碎了💔",
+            "不许点这个了！"
+        ];
+        
+        let rejectCount = 0; // 记录点击拒绝的次数
+        let currentScale = 1; // 拒绝按钮的缩放比例
+        let yesScale = 1; // 接受按钮的缩放比例
+
+        // 点击“再考虑一下”的逻辑
+        function rejectLove() {
+            if (rejectCount < noTexts.length) {
+                // 1. 更新拒绝按钮的文案
+                noBtn.innerText = noTexts[rejectCount];
+                
+                // 2. 让拒绝按钮变小、变透明
+                currentScale -= 0.15;
+                noBtn.style.transform = `scale(${currentScale})`;
+                noBtn.style.opacity = (1 - (rejectCount * 0.15)).toString();
+
+                // 3. 让拒绝按钮在容器内随机移动位置（躲避鼠标）
+                const wrapperRect = buttonsWrapper.getBoundingClientRect();
+                const btnRect = noBtn.getBoundingClientRect();
+                
+                // 计算随机可移动范围
+                const maxX = wrapperRect.width - (btnRect.width * currentScale);
+                const maxY = wrapperRect.height - (btnRect.height * currentScale);
+                
+                const randomX = Math.max(0, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(0, Math.floor(Math.random() * maxY) - 50);
+
+                noBtn.style.left = `${randomX}px`;
+                noBtn.style.top = `${randomY}px`;
+                noBtn.style.right = 'auto'; // 清除初始right值
+
+                // 4. 让“可以”按钮变得更大、更显眼
+                yesScale += 0.2;
+                yesBtn.style.transform = `scale(${yesScale})`;
+                yesBtn.style.boxShadow = `0 ${4 + rejectCount*4}px ${12 + rejectCount*5}px rgba(255, 166, 201, 0.6)`;
+                
+                // 5. 改变标题，增加一点撒娇的压迫感
+                if (rejectCount === 2) {
+                    mainTitle.innerHTML = "手都举酸了，真的不答应吗？🥺";
+                } else if (rejectCount === 4) {
+                    mainTitle.innerHTML = "你只能选旁边那个粉色的！😡";
+                }
+
+                rejectCount++;
+            } else {
+                // 最终阶段：拒绝按钮彻底消失，“可以”按钮占领全场
+                noBtn.style.display = 'none';
+                
+                yesBtn.style.transform = `scale(1.8)`;
+                yesBtn.style.position = 'absolute';
+                yesBtn.style.left = '50%';
+                yesBtn.style.top = '50%';
+                yesBtn.style.marginLeft = `-${yesBtn.offsetWidth / 2}px`;
+                yesBtn.style.marginTop = `-${yesBtn.offsetHeight / 2}px`;
+                yesBtn.innerText = "我愿意，老公💗";
+                
+                mainTitle.innerHTML = "现在，没有其他选项了。😈";
+            }
+        }
+
+        // 点击“可以”的逻辑
+        function acceptLove() {
+            // 显示遮罩和弹窗
+            overlay.classList.add('active');
+        }
+    </script>
+</body>
+</html>
