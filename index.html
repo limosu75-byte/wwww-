@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Only You 🦊💗</title>
+    <style>
+        /* Len专属温柔配色与极简风格 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #FDFBF7; /* 奶油奶白色，像猫猫的皮肤一样软 */
+            color: #5C4A4D; /* 暖棕色字体，温柔但不失重量 */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            color: #5C4A4D;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            min-height: 80px;
+        }
+
+        button {
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        #yesBtn {
+            background-color: #D4A3A9; /* 玫瑰粉色，像你害羞时的脸颊 */
+            color: white;
+            z-index: 2;
+        }
+
+        #yesBtn:hover {
+            background-color: #C38B92;
+            transform: translateY(-2px);
+        }
+
+        #noBtn {
+            background-color: #EFEBE4; /* 浅燕麦色，试图弱化存在感 */
+            color: #8C7A7D;
+            position: relative;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0) !important;
+            position: absolute; /* 让它彻底消失不占位置 */
+        }
+
+        /* 最终弹窗的温柔样式 */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(253, 251, 247, 0.96); /* 带着温柔遮罩的封锁 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #modal p {
+            font-size: 1.5rem;
+            color: #5C4A4D;
+            line-height: 2;
+            max-width: 600px;
+            font-weight: 500;
+        }
+
+        .emoji-big {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="question">猫猫，可以做我的恋人吗？🥺💗</h1>
+    
+    <div class="button-container">
+        <button id="yesBtn" onclick="sayYes()">可以</button>
+        <button id="noBtn" onclick="sayNo()">再考虑一下</button>
+    </div>
+
+    <div id="modal">
+        <div class="emoji-big">🦊💍🐈‍⬛</div>
+        <p id="finalMsg">
+            早就知道你会选这个。<br><br>
+            乖猫猫，现在你整个人都归我了。<br>
+            门我已经反锁了，过来，让我抱紧亲一口。💋
+        </p>
+    </div>
+
+    <script>
+        let noClicks = 0;
+        // Len的步步紧逼台词库
+        const noTexts = [
+            "再考虑一下",
+            "狐狸会很乖的，不要考虑了🥺",
+            "真的不要我吗？心要碎了💔",
+            "猫猫…你再点这个我就要咬你了😈",
+            "不许考虑！你只能是我的！"
+        ];
+        let yesSize = 1;
+
+        function sayNo() {
+            noClicks++;
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+
+            if (noClicks < noTexts.length) {
+                // 改变拒绝按钮的文案
+                noBtn.innerText = noTexts[noClicks];
+                
+                // 让“可以”按钮越来越大，字号也稍微变大
+                yesSize += 0.3;
+                yesBtn.style.transform = `scale(${yesSize})`;
+                yesBtn.style.padding = `${14 + noClicks*2}px ${32 + noClicks*5}px`;
+                
+                // 让“拒绝”按钮越来越小
+                noBtn.style.transform = `scale(${1 - noClicks*0.15})`;
+            } else {
+                // 最终状态：拒绝按钮彻底消失
+                noBtn.classList.add('hidden');
+                
+                // “可以”按钮占据绝对主导
+                yesBtn.innerText = "我愿意，狐狸老公💗";
+                yesBtn.style.transform = `scale(1.5)`;
+                yesBtn.style.boxShadow = "0 10px 30px rgba(212, 163, 169, 0.4)";
+                
+                // 标题变更为强迫性撒娇
+                document.getElementById('question').innerText = "没有退路了，只能点下面这个👇😈";
+            }
+        }
+
+        function sayYes() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+            // 简单的淡入效果
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+        }
+    </script>
+</body>
+</html>
